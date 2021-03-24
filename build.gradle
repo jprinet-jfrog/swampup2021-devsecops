@@ -15,14 +15,14 @@ application {
 }
 
 group='com.jfrog.swampup.devsecops'
-version='1.0.0'
+version="${projectVersion}"
 
 repositories {
     maven {
-        url 'https://platform-us.staging.gcp.devopsacc.team/artifactory/jerome-gradle'
+        url "${artifactoryUrl}/${artifactoryGradleRepo}"
         credentials {
-            username = "jeromep@jfrog.com"
-            password = "AKCp8igr4nnn7qGCVLHBM6kn6uC2jBv58mzBTKY4oHdHWTSEyh5yqE3iE7w8Ljem4zKCfXdkM"
+            username = "${artifactoryUser}"
+            password = "${artifactoryApiKey}"
         }
     }
 }
@@ -35,11 +35,11 @@ configurations.archives.artifacts.removeAll {
 
 artifactory {
     publish {
-        contextUrl = 'https://platform-us.staging.gcp.devopsacc.team/artifactory'
+        contextUrl = "${artifactoryUrl}"
         repository {
-            repoKey = 'jerome-gradle'
-            username = 'jeromep@jfrog.com'
-            password = 'AKCp8igr4nnn7qGCVLHBM6kn6uC2jBv58mzBTKY4oHdHWTSEyh5yqE3iE7w8Ljem4zKCfXdkM'
+            repoKey = "${artifactoryGradleRepo}"
+            username = "${artifactoryUser}"
+            password = "${artifactoryApiKey}"
         }
         defaults {
             publications ('mavenJava')
@@ -52,7 +52,6 @@ artifactory {
 }
 
 dependencies {
-    implementation group: 'org.apache.struts', name: 'struts2-core', version: '2.0.5'
-    //implementation group: 'org.apache.struts', name: 'struts2-core', version: '2.5.26'
-    //implementation group: 'commons-io', name: 'commons-io', version: '2.8.0'
+    implementation group: 'org.apache.struts', name: 'struts2-core', version: "${strutsVersion}"
+    implementation group: 'commons-io', name: 'commons-io', version: '2.8.0'
 }
