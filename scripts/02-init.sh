@@ -1,69 +1,51 @@
-# General Requirements
+#!/usr/bin/env bash
 
-Make sure you have: 
-- internet access
-- Java Development Kit (JDK) 11 or above
-- git
-- Docker
+################################
+# Sourcing external properties #
+################################
+readonly BUILD_ENV_FILE=build.env
+if [ ! -f "${BUILD_ENV_FILE}" ]; then
+    echo "ERROR - could not find ${BUILD_ENV_FILE}"
+    exit 1
+fi
 
-# Artifactory Configuration Requirements
+source "${BUILD_ENV_FILE}"
 
-## Docker registry access method
+echo "INFO - artifactory = ${ARTIFACTORY_HOSTNAME}"
+echo "INFO - login = ${ARTIFACTORY_LOGIN}"
 
-if not using an Artifactory SaaS instance, set up the [repository path method](https://www.jfrog.com/confluence/display/JFROG/Getting+Started+with+Artifactory+as+a+Docker+Registry#GettingStartedwithArtifactoryasaDockerRegistry-ConfiguringArtifactory.1)
+#######################
+# internal properties #
+#######################
+readonly CLI_INSTANCE_ID='my-instance'
+readonly ARTIFACTORY_URL="https://${ARTIFACTORY_HOSTNAME}/artifactory"
 
-## API Key
+################
+# download CLI #
+################
+if [ ! -f "./jfrog" ]; then
+  echo "INFO - downloading JFrog CLI"
+  curl -fL https://getcli.jfrog.io | sh
+  retVal=$?
+  if [ $retVal -ne 0 ]; then
+      echo "ERROR - issue encountered while downloading JFrog CLI"
+      exit 2
+  fi
+  mv ./jfrog ..
+fi
 
-Generate an [API Key](https://www.jfrog.com/confluence/display/JFROG/User+Profile#UserProfile-APIKey) for your Artifactory user
-
-Copy it to the clipboard
-
-# Artifactory Data Requirements
-
-Move into the scripts folder:
-```bash
-cd scripts
-```
-
-## Environment
-
-copy build.env.template to build.env and set values accordingly:
-
-```bash
-ARTIFACTORY_HOSTNAME='my-instance.jfrog.io'
-ARTIFACTORY_LOGIN='foo@bar.com'
-ARTIFACTORY_API_KEY='MY_KEY'
-```
-
-## Set dynamic properties
-
-```bash
-source ./build.env
-```
-
-## Set static properties
-
-```bash
-ARTIFACTORY_URL="https://${ARTIFACTORY_HOSTNAME}/artifactory"
-CLI_INSTANCE_ID='my-instance'
-```
-
-## Download JFrog CLI
-
-```bash
-curl -fL https://getcli.jfrog.io | sh
-```
-
-## Configure JFrog CLI
-
-```bash
-./jfrog config remove "${CLI_INSTANCE_ID}" --quiet
+#################
+# init process #
+#################
+echo "INFO - configuring instance"
 ./jfrog config add "${CLI_INSTANCE_ID}" --artifactory-url="${ARTIFACTORY_URL}" --user="${ARTIFACTORY_LOGIN}" --apikey="${ARTIFACTORY_API_KEY}" --interactive=false
-```
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    echo "ERROR - issue encountered while configuring instance"
+    exit 3
+fi
 
-## Create repositories
-
-```bash
+echo "INFO - creating repos"
 ./jfrog rt repo-create template-create-repo.json --vars "repo-name=devsecops-docker-dev-local;repo-type=local;tech=docker" --server-id="${CLI_INSTANCE_ID}"
 ./jfrog rt repo-create template-create-repo.json --vars "repo-name=devsecops-docker-prod-local;repo-type=local;tech=docker" --server-id="${CLI_INSTANCE_ID}"
 ./jfrog rt repo-create template-create-repo.json --vars "repo-name=devsecops-docker-remote;repo-type=remote;tech=docker;url=https://registry-1.docker.io/" --server-id="${CLI_INSTANCE_ID}"
@@ -75,5 +57,3 @@ curl -fL https://getcli.jfrog.io | sh
 ./jfrog rt repo-create template-create-repo.json --vars "repo-name=devsecops-gradle-remote;repo-type=remote;tech=gradle;url=https://jcenter.bintray.com" --server-id="${CLI_INSTANCE_ID}"
 ./jfrog rt repo-create template-create-repo.json --vars "repo-name=devsecops-gradle-dev;repo-type=virtual;tech=gradle;repositories=devsecops-gradle-remote,devsecops-gradle-dev-local;default=devsecops-gradle-dev-local" --server-id="${CLI_INSTANCE_ID}"
 ./jfrog rt repo-create template-create-repo.json --vars "repo-name=devsecops-gradle-prod;repo-type=virtual;tech=gradle;repositories=devsecops-gradle-remote,devsecops-gradle-prod-local;default=devsecops-gradle-prod-local" --server-id="${CLI_INSTANCE_ID}"
-```
-

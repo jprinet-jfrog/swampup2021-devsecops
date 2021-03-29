@@ -9,7 +9,7 @@
 
 ## Index resources
 
-- index **devsecops-docker-prod** repository 
+- index **devsecops-docker-prod-local** repository 
 
 ## Create Xray policy
 
@@ -20,7 +20,7 @@ Create **block-download-on-high-severity** security policy:
 ## Create Xray watch
 
 Create **devsecops-docker-repo-watch** watch:
-- add **devsecops-docker-prod** repository as resource
+- add **devsecops-docker-prod-local** repository as resource
 - add **block-download-on-high-severity** as policy
 
 ## Apply on existing content
