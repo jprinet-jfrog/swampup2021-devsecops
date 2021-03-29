@@ -2,10 +2,13 @@
 
 ## Objective
 
+- Fix the security issues
 - Build the Docker image in a CI like environment using JFrog CLI
 - Upload the build information to Artifactory
 - Scan while building
-- [Try to] Download the Docker image created during build
+- Upload the artifacts to Artifactory
+- Promote the Docker image to a production grade repository
+- Download the Docker image 
 
 ## Set dynamic properties
 
@@ -23,10 +26,10 @@ ARTIFACTORY_URL="https://${ARTIFACTORY_HOSTNAME}/artifactory"
 CLI_INSTANCE_ID='my-instance'
 CLI_GRADLE_BUILD_NAME='devsecops-gradle'
 CLI_DOCKER_BUILD_NAME='devsecops-docker'
-CLI_BUILD_ID='1'
+CLI_BUILD_ID='2'
 
-PROJECT_VERSION='0.0.10'
-STRUTS_VERSION='2.0.5'
+PROJECT_VERSION='1.0.0'
+STRUTS_VERSION='2.5.26'
 
 DOCKER_REPO_DEV=devsecops-docker-dev
 DOCKER_REPO_PROD=devsecops-docker-prod
@@ -36,11 +39,14 @@ DOCKER_REGISTRY_DEV="${ARTIFACTORY_HOSTNAME}/${DOCKER_REPO_DEV}"
 DOCKER_REGISTRY_PROD="${ARTIFACTORY_HOSTNAME}/${DOCKER_REPO_PROD}"
 
 BASE_IMAGE_REGISTRY="${DOCKER_REGISTRY_PROD}"
-BASE_IMAGE_TAG='3.1'
+BASE_IMAGE_TAG='3.13.0'
 BASE_IMAGE="${BASE_IMAGE_REGISTRY}/alpine:${BASE_IMAGE_TAG}"
 IMAGE_NAME='swampup/devsecops'
 IMAGE_ABSOLUTE_NAME_DEV="${DOCKER_REGISTRY_DEV}/${IMAGE_NAME}:${PROJECT_VERSION}"
+IMAGE_ABSOLUTE_NAME_PROD="${DOCKER_REGISTRY_PROD}/${IMAGE_NAME}:${PROJECT_VERSION}"
 ```
+
+## Check watch results from build #1
 
 ## Configure Gradle build
 
@@ -68,22 +74,6 @@ scripts/jfrog rt gradle clean artifactoryPublish \
 ```bash
 scripts/jfrog rt build-publish --server-id="${CLI_INSTANCE_ID}" "${CLI_GRADLE_BUILD_NAME}" "${CLI_BUILD_ID}"
 ```
-
-## Index resources
-
-- index **devsecops-**** build
-
-## Create Xray policy
-
-Create **fail-build-on-high-severity** security policy:
-- trigger a violation on **high severity** security issue discovered
-- **Fail Build** as action
-
-## Create Xray watch
-
-Create **devsecops-docker-build-watch** watch:
-- add **devsecops-**** build (pattern) as resource
-- add **fail-build-on-high-severity** as policy
 
 ## Log into Docker registry
 
@@ -123,6 +113,22 @@ scripts/jfrog rt build-publish --server-id="${CLI_INSTANCE_ID}" "${CLI_DOCKER_BU
 scripts/jfrog rt build-scan --server-id="${CLI_INSTANCE_ID}" "${CLI_DOCKER_BUILD_NAME}" "${CLI_BUILD_ID}"
 ```
 
+## Promote Docker image to production repository
+
+```bash
+scripts/jfrog rt build-promote --server-id="${CLI_INSTANCE_ID}" "${CLI_DOCKER_BUILD_NAME}" "${CLI_BUILD_ID}" ${DOCKER_REPO_PROD}-local 
+```
+
+## Download image
+
+```bash
+docker rmi ${IMAGE_ABSOLUTE_NAME_PROD} 2>/dev/null
+docker images | grep ${DOCKER_REPO_PROD}
+docker pull ${IMAGE_ABSOLUTE_NAME_PROD}
+docker images | grep ${DOCKER_REPO_PROD}
+```
+
 ## Conclusion
 
-Image can't be built successfully
+- Build passed successfully
+- Image can be downloaded successfully
