@@ -1,5 +1,5 @@
-ARG BASE_IMAGE_TAG=latest
-FROM alpine:${BASE_IMAGE_TAG}
+ARG BASE_IMAGE=foo
+FROM ${BASE_IMAGE}
 LABEL maintainer="jeromep@jfrog.com" description="image shipping java archive"
 
 USER foo:bar
