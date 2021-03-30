@@ -9,7 +9,8 @@
 
 ## Index resources
 
-- index **devsecops-docker-prod-local** repository 
+- Index **devsecops-docker-prod-local** repository 
+- Expedite the indexing progress using the Index Now feature.
 
 ## Create Xray policy
 
@@ -27,11 +28,14 @@ Create **devsecops-docker-repo-watch** watch:
 
 ## Download image
 
+Remove local image:
 ```bash
 docker rmi ${IMAGE_ABSOLUTE_NAME_PROD} 2>/dev/null
-docker images | grep ${DOCKER_REPO_PROD}
+```
+
+Try to pull image from Artifactory:
+```bash
 docker pull ${IMAGE_ABSOLUTE_NAME_PROD}
-docker images | grep ${DOCKER_REPO_PROD}
 ```
 
 ## Conclusion

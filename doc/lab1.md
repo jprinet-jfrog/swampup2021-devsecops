@@ -83,10 +83,18 @@ curl -H "X-JFrog-Art-Api: ${ARTIFACTORY_API_KEY}" \
 
 ## Download image
 
+Check local docker image:
 ```bash
-docker rmi ${IMAGE_ABSOLUTE_NAME_PROD} 2>/dev/null
 docker images | grep ${DOCKER_REPO_PROD}
+```
+
+Pull docker image:
+```bash
 docker pull ${IMAGE_ABSOLUTE_NAME_PROD}
+```
+
+Check local docker image:
+```bash
 docker images | grep ${DOCKER_REPO_PROD}
 ```
 

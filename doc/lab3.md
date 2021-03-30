@@ -82,7 +82,7 @@ Create **fail-build-on-high-severity** security policy:
 ## Create Xray watch
 
 Create **devsecops-docker-build-watch** watch:
-- add **devsecops-**** build (pattern) as resource
+- add **devsecops-\*/*** build (pattern) as resource
 - add **fail-build-on-high-severity** as policy
 
 ## Log into Docker registry
@@ -97,14 +97,6 @@ docker login -u "${ARTIFACTORY_LOGIN}" -p "${ARTIFACTORY_API_KEY}" "${DOCKER_REG
 docker build -t "${IMAGE_ABSOLUTE_NAME_DEV}" --build-arg "BASE_IMAGE=${BASE_IMAGE}" .
 ```
 
-## Add dependencies to Build info
-
-```bash
-docker rmi ${BASE_IMAGE}
-scripts/jfrog rt docker-pull --server-id="${CLI_INSTANCE_ID}" --skip-login --build-name="${CLI_DOCKER_BUILD_NAME}" --build-number="${CLI_BUILD_ID}" --module="${CLI_DOCKER_BUILD_NAME}" "${BASE_IMAGE}" "${DOCKER_REPO_PROD}"
-scripts/jfrog rt build-add-dependencies --server-id="${CLI_INSTANCE_ID}" "${CLI_DOCKER_BUILD_NAME}" "${CLI_BUILD_ID}" "build/distributions/*.tar"
-```
-
 ## Push Docker image to Artifactory
 
 ```bash
@@ -115,6 +107,12 @@ scripts/jfrog rt docker-push --server-id="${CLI_INSTANCE_ID}" --skip-login --bui
 
 ```bash
 scripts/jfrog rt build-publish --server-id="${CLI_INSTANCE_ID}" "${CLI_DOCKER_BUILD_NAME}" "${CLI_BUILD_ID}"
+```
+
+## Scan Gradle Build
+
+```bash
+scripts/jfrog rt build-scan --server-id="${CLI_INSTANCE_ID}" "${CLI_GRADLE_BUILD_NAME}" "${CLI_BUILD_ID}"
 ```
 
 ## Scan Docker Build

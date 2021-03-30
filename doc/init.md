@@ -3,8 +3,8 @@
 Make sure you have: 
 - internet access
 - Java Development Kit (JDK) 11 or above
-- git
 - Docker
+- curl
 
 # Artifactory Configuration Requirements
 
@@ -57,7 +57,6 @@ curl -fL https://getcli.jfrog.io | sh
 ## Configure JFrog CLI
 
 ```bash
-./jfrog config remove "${CLI_INSTANCE_ID}" --quiet
 ./jfrog config add "${CLI_INSTANCE_ID}" --artifactory-url="${ARTIFACTORY_URL}" --user="${ARTIFACTORY_LOGIN}" --apikey="${ARTIFACTORY_API_KEY}" --interactive=false
 ```
 
