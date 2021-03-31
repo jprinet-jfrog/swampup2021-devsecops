@@ -39,19 +39,19 @@ readonly IMAGE_ABSOLUTE_NAME_PROD="${DOCKER_REGISTRY_PROD}/${IMAGE_NAME}:${PROJE
 # build process #
 #################
 echo "INFO - build Gradle project"
-./gradlew clean artifactoryPublish \
+(cd .. ; gradlew clean artifactoryPublish \
     -PprojectVersion="${PROJECT_VERSION}" \
     -PartifactoryUrl="${ARTIFACTORY_URL}" \
     -PartifactoryGradleRepo="devsecops-gradle-dev" \
     -PartifactoryUser="${ARTIFACTORY_LOGIN}" \
     -PartifactoryApiKey="${ARTIFACTORY_API_KEY}" \
-    -PstrutsVersion="${STRUTS_VERSION}"
+    -PstrutsVersion="${STRUTS_VERSION}")
 
 echo "INFO - Log into Docker registry ${DOCKER_REGISTRY_DEV}"
 docker login -u "${ARTIFACTORY_LOGIN}" -p "${ARTIFACTORY_API_KEY}" "${DOCKER_REGISTRY_DEV}"
 
 echo "INFO - Build Docker image ${IMAGE_ABSOLUTE_NAME_DEV}"
-docker build -t "${IMAGE_ABSOLUTE_NAME_DEV}" --build-arg "BASE_IMAGE=${BASE_IMAGE}" .
+(cd .. ; docker build -t "${IMAGE_ABSOLUTE_NAME_DEV}" --build-arg "BASE_IMAGE=${BASE_IMAGE}" .)
 
 echo "INFO - Push Docker image ${IMAGE_ABSOLUTE_NAME_DEV}"
 docker push "${IMAGE_ABSOLUTE_NAME_DEV}"
