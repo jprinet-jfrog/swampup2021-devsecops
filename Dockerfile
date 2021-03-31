@@ -1,8 +1,8 @@
-ARG BASE_IMAGE_TAG=latest
-FROM alpine:${BASE_IMAGE_TAG}
-LABEL maintainer="jeromep@jfrog.com" description="image shipping java archive"
+ARG BASE_IMAGE=foo
+FROM ${BASE_IMAGE}
+LABEL maintainer="jeromep@jfrog.com" description="Swampup DevSecOps sample image"
 
 USER foo:bar
 
-# adding maven archive
+# adding gradle archive
 ADD build/distributions/*.tar dist
