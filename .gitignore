@@ -1,5 +1,6 @@
 .idea
 .gradle
+.jfrog
 build
 scripts/build.env
 scripts/jfrog
