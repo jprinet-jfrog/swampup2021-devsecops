@@ -1,5 +1,9 @@
 # Lab 1
 
+## Context
+
+- You are developing a new software and security is not a concern
+
 ## Objective
 
 - Create a Gradle project and ship the archive in a Docker image
@@ -7,20 +11,13 @@
 - Promote the Docker image to a production grade repository
 - Download the Docker image
 
-## Set dynamic properties
-
-Move into the root folder:
-```bash
-cd ..
-```
-
-Source dynamic properties
+## Source properties
 
 ```bash
 source scripts/build.env
 ```
 
-## Set static properties
+## Init Lab properties
 
 ```bash
 ARTIFACTORY_URL="https://${ARTIFACTORY_HOSTNAME}/artifactory"

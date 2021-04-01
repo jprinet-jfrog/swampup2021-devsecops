@@ -27,16 +27,16 @@ readonly XRAY_URL="https://${ARTIFACTORY_HOSTNAME}/xray"
 # reset process #
 #################
 echo "INFO - deleting repos"
-../jfrog rt repo-delete devsecops-docker-dev-local --quiet --server-id="${CLI_INSTANCE_ID}"
-../jfrog rt repo-delete devsecops-docker-prod-local --quiet --server-id="${CLI_INSTANCE_ID}"
-../jfrog rt repo-delete devsecops-docker-remote --quiet --server-id="${CLI_INSTANCE_ID}"
-../jfrog rt repo-delete devsecops-docker-dev --quiet --server-id="${CLI_INSTANCE_ID}"
-../jfrog rt repo-delete devsecops-docker-prod --quiet --server-id="${CLI_INSTANCE_ID}"
-../jfrog rt repo-delete devsecops-gradle-dev-local --quiet --server-id="${CLI_INSTANCE_ID}"
-../jfrog rt repo-delete devsecops-gradle-prod-local --quiet --server-id="${CLI_INSTANCE_ID}"
-../jfrog rt repo-delete devsecops-gradle-remote --quiet --server-id="${CLI_INSTANCE_ID}"
-../jfrog rt repo-delete devsecops-gradle-dev --quiet --server-id="${CLI_INSTANCE_ID}"
-../jfrog rt repo-delete devsecops-gradle-prod --quiet --server-id="${CLI_INSTANCE_ID}"
+../../jfrog rt repo-delete devsecops-docker-dev-local --quiet --server-id="${CLI_INSTANCE_ID}"
+../../jfrog rt repo-delete devsecops-docker-prod-local --quiet --server-id="${CLI_INSTANCE_ID}"
+../../jfrog rt repo-delete devsecops-docker-remote --quiet --server-id="${CLI_INSTANCE_ID}"
+../../jfrog rt repo-delete devsecops-docker-dev --quiet --server-id="${CLI_INSTANCE_ID}"
+../../jfrog rt repo-delete devsecops-docker-prod --quiet --server-id="${CLI_INSTANCE_ID}"
+../../jfrog rt repo-delete devsecops-gradle-dev-local --quiet --server-id="${CLI_INSTANCE_ID}"
+../../jfrog rt repo-delete devsecops-gradle-prod-local --quiet --server-id="${CLI_INSTANCE_ID}"
+../../jfrog rt repo-delete devsecops-gradle-remote --quiet --server-id="${CLI_INSTANCE_ID}"
+../../jfrog rt repo-delete devsecops-gradle-dev --quiet --server-id="${CLI_INSTANCE_ID}"
+../../jfrog rt repo-delete devsecops-gradle-prod --quiet --server-id="${CLI_INSTANCE_ID}"
 
 echo "INFO - deleting builds"
 curl -H "X-JFrog-Art-Api: ${ARTIFACTORY_API_KEY}" \
@@ -63,7 +63,7 @@ curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
      -X DELETE "${XRAY_URL}/api/v2/policies/fail-build-on-high-severity"
 
 echo "INFO - removing CLI configuration"
-../jfrog config remove "${CLI_INSTANCE_ID}" --quiet
+../../jfrog config remove "${CLI_INSTANCE_ID}" --quiet
 
 echo "INFO - clean local docker registry"
 docker rmi ${ARTIFACTORY_HOSTNAME}/devsecops-docker-prod/alpine:3.1 2>/dev/null
