@@ -3,7 +3,7 @@
 ################################
 # Sourcing external properties #
 ################################
-readonly BUILD_ENV_FILE=build.env
+readonly BUILD_ENV_FILE=../build.env
 if [ ! -f "${BUILD_ENV_FILE}" ]; then
     echo "ERROR - could not find ${BUILD_ENV_FILE}"
     exit 1
@@ -39,7 +39,7 @@ readonly IMAGE_ABSOLUTE_NAME_PROD="${DOCKER_REGISTRY_PROD}/${IMAGE_NAME}:${PROJE
 # build process #
 #################
 echo "INFO - build Gradle project"
-(cd .. ; gradlew clean artifactoryPublish \
+(cd ../.. ; gradlew clean artifactoryPublish \
     -PprojectVersion="${PROJECT_VERSION}" \
     -PartifactoryUrl="${ARTIFACTORY_URL}" \
     -PartifactoryGradleRepo="devsecops-gradle-dev" \
@@ -51,7 +51,7 @@ echo "INFO - Log into Docker registry ${DOCKER_REGISTRY_DEV}"
 docker login -u "${ARTIFACTORY_LOGIN}" -p "${ARTIFACTORY_API_KEY}" "${DOCKER_REGISTRY_DEV}"
 
 echo "INFO - Build Docker image ${IMAGE_ABSOLUTE_NAME_DEV}"
-(cd .. ; docker build -t "${IMAGE_ABSOLUTE_NAME_DEV}" --build-arg "BASE_IMAGE=${BASE_IMAGE}" .)
+(cd ../.. ; docker build -t "${IMAGE_ABSOLUTE_NAME_DEV}" --build-arg "BASE_IMAGE=${BASE_IMAGE}" .)
 
 echo "INFO - Push Docker image ${IMAGE_ABSOLUTE_NAME_DEV}"
 docker push "${IMAGE_ABSOLUTE_NAME_DEV}"

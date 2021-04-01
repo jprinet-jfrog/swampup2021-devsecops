@@ -3,7 +3,7 @@
 ################################
 # Sourcing external properties #
 ################################
-readonly BUILD_ENV_FILE=build.env
+readonly BUILD_ENV_FILE=../build.env
 if [ ! -f "${BUILD_ENV_FILE}" ]; then
     echo "ERROR - could not find ${BUILD_ENV_FILE}"
     exit 1
@@ -44,10 +44,10 @@ readonly IMAGE_ABSOLUTE_NAME_DEV="${DOCKER_REGISTRY_DEV}/${IMAGE_NAME}:${PROJECT
 # build process #
 #################
 echo "INFO - configure CLI for Gradle"
-./jfrog rt gradle-config --server-id-resolve="${CLI_INSTANCE_ID}" --repo-resolve="${GRADLE_REPO_DEV}" --server-id-deploy="${CLI_INSTANCE_ID}" --repo-deploy="${GRADLE_REPO_DEV}" --use-wrapper=true --uses-plugin=true --deploy-ivy-desc=false
+../jfrog rt gradle-config --server-id-resolve="${CLI_INSTANCE_ID}" --repo-resolve="${GRADLE_REPO_DEV}" --server-id-deploy="${CLI_INSTANCE_ID}" --repo-deploy="${GRADLE_REPO_DEV}" --use-wrapper=true --uses-plugin=true --deploy-ivy-desc=false
 
 echo "INFO - build gradle project"
-(cd .. ; scripts/jfrog rt gradle clean artifactoryPublish \
+(cd ../.. ; scripts/jfrog rt gradle clean artifactoryPublish \
             -b build.gradle \
             --build-name "${CLI_GRADLE_BUILD_NAME}" \
             --build-number "${CLI_BUILD_ID}" \
@@ -59,13 +59,13 @@ echo "INFO - build gradle project"
             -PstrutsVersion="${STRUTS_VERSION}")
 
 echo "INFO - publish Gradle build info"
-./jfrog rt build-publish --server-id="${CLI_INSTANCE_ID}" "${CLI_GRADLE_BUILD_NAME}" "${CLI_BUILD_ID}"
+../jfrog rt build-publish --server-id="${CLI_INSTANCE_ID}" "${CLI_GRADLE_BUILD_NAME}" "${CLI_BUILD_ID}"
 
 echo "INFO - Log into Docker registry ${DOCKER_REGISTRY_DEV}"
 docker login -u "${ARTIFACTORY_LOGIN}" -p "${ARTIFACTORY_API_KEY}" "${DOCKER_REGISTRY_DEV}"
 
 echo "INFO - Build docker image ${IMAGE_ABSOLUTE_NAME_DEV}"
-(cd .. ; docker build -t "${IMAGE_ABSOLUTE_NAME_DEV}" --build-arg "BASE_IMAGE=${BASE_IMAGE}" .)
+(cd ../.. ; docker build -t "${IMAGE_ABSOLUTE_NAME_DEV}" --build-arg "BASE_IMAGE=${BASE_IMAGE}" .)
 
 #echo "INFO - Add dependencies to Build info"
 #docker rmi "${BASE_IMAGE}"
@@ -73,10 +73,10 @@ echo "INFO - Build docker image ${IMAGE_ABSOLUTE_NAME_DEV}"
 #./jfrog rt build-add-dependencies --server-id="${CLI_INSTANCE_ID}" "${CLI_DOCKER_BUILD_NAME}" "${CLI_BUILD_ID}" "build/distributions/*.tar"
 
 echo "INFO - Push docker image ${IMAGE_ABSOLUTE_NAME_DEV}"
-./jfrog rt docker-push --server-id="${CLI_INSTANCE_ID}" --skip-login --build-name="${CLI_DOCKER_BUILD_NAME}" --build-number="${CLI_BUILD_ID}" --module="${CLI_DOCKER_BUILD_NAME}" "${IMAGE_ABSOLUTE_NAME_DEV}" "${DOCKER_REPO_DEV}"
+../jfrog rt docker-push --server-id="${CLI_INSTANCE_ID}" --skip-login --build-name="${CLI_DOCKER_BUILD_NAME}" --build-number="${CLI_BUILD_ID}" --module="${CLI_DOCKER_BUILD_NAME}" "${IMAGE_ABSOLUTE_NAME_DEV}" "${DOCKER_REPO_DEV}"
 
 echo "INFO - Publish Docker build info"
-./jfrog rt build-publish --server-id="${CLI_INSTANCE_ID}" "${CLI_DOCKER_BUILD_NAME}" "${CLI_BUILD_ID}"
+../jfrog rt build-publish --server-id="${CLI_INSTANCE_ID}" "${CLI_DOCKER_BUILD_NAME}" "${CLI_BUILD_ID}"
 
 echo "INFO - Scan Docker build"
-./jfrog rt build-scan --server-id="${CLI_INSTANCE_ID}" "${CLI_DOCKER_BUILD_NAME}" "${CLI_BUILD_ID}"
+../jfrog rt build-scan --server-id="${CLI_INSTANCE_ID}" "${CLI_DOCKER_BUILD_NAME}" "${CLI_BUILD_ID}"
