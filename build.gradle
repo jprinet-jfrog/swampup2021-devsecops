@@ -54,4 +54,5 @@ artifactory {
 dependencies {
     implementation group: 'org.apache.struts', name: 'struts2-core', version: "${strutsVersion}"
     implementation group: 'commons-io', name: 'commons-io', version: '2.8.0'
+    implementation group: 'org.javassist', name: 'javassist', version: '3.20.0-GA'
 }

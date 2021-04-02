@@ -39,7 +39,7 @@ readonly IMAGE_ABSOLUTE_NAME_PROD="${DOCKER_REGISTRY_PROD}/${IMAGE_NAME}:${PROJE
 # build process #
 #################
 echo "INFO - build Gradle project"
-(cd ../.. ; gradlew clean artifactoryPublish \
+(cd ../.. ; ./gradlew clean artifactoryPublish \
     -PprojectVersion="${PROJECT_VERSION}" \
     -PartifactoryUrl="${ARTIFACTORY_URL}" \
     -PartifactoryGradleRepo="devsecops-gradle-dev" \

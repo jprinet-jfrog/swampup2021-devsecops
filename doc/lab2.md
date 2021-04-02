@@ -1,5 +1,10 @@
 # Lab 2
 
+## Context
+
+- Security team is running a security audit
+- You want to swiftly confirm that everything is fine security wise
+
 ## Objective
 
 - Configure JFrog Xray

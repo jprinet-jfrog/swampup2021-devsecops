@@ -3,4 +3,4 @@
 .jfrog
 build
 scripts/build.env
-scripts/jfrog
+jfrog
