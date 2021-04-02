@@ -2,7 +2,7 @@
 
 ## Context
 
-- You will be distributing your software soon and you don't want to publish your source code
+- You will be distributing your software soon, and you don't want to publish your source code
 - You need to avoid any contaminating license like GPL
 
 ## Objective

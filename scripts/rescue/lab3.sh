@@ -78,5 +78,8 @@ echo "INFO - Push docker image ${IMAGE_ABSOLUTE_NAME_DEV}"
 echo "INFO - Publish Docker build info"
 ../../jfrog rt build-publish --server-id="${CLI_INSTANCE_ID}" "${CLI_DOCKER_BUILD_NAME}" "${CLI_BUILD_ID}"
 
+echo "INFO - Scan Gradle build"
+../../jfrog rt build-scan --server-id="${CLI_INSTANCE_ID}" "${CLI_GRADLE_BUILD_NAME}" "${CLI_BUILD_ID}"
+
 echo "INFO - Scan Docker build"
 ../../jfrog rt build-scan --server-id="${CLI_INSTANCE_ID}" "${CLI_DOCKER_BUILD_NAME}" "${CLI_BUILD_ID}"
