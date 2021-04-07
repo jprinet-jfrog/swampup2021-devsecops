@@ -18,6 +18,7 @@ echo "INFO - login = ${ARTIFACTORY_LOGIN}"
 # internal properties #
 #######################
 readonly ARTIFACTORY_URL="https://${ARTIFACTORY_HOSTNAME}/artifactory"
+readonly XRAY_URL="https://${ARTIFACTORY_HOSTNAME}/xray"
 
 readonly CLI_INSTANCE_ID='my-instance'
 readonly CLI_GRADLE_BUILD_NAME='devsecops-gradle'
@@ -43,6 +44,69 @@ readonly IMAGE_ABSOLUTE_NAME_DEV="${DOCKER_REGISTRY_DEV}/${IMAGE_NAME}:${PROJECT
 #################
 # build process #
 #################
+echo "INFO - Collect indexing configuration"
+INDEXED_BUILDS=$(curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
+                  -H 'Content-Type: application/json' \
+                  -X GET "${XRAY_URL}/api/v1/binMgr/default/builds" \
+                  | jq -r '.indexed_builds + ["devsecops-gradle-legacy","devsecops-docker","devsecops-gradle"]')
+
+echo "INFO - Updating indexing configuration"
+curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
+    -H 'Content-Type: application/json' \
+    -X PUT "${XRAY_URL}/api/v1/binMgr/default/builds" \
+    -d \
+    "{
+        \"indexed_builds\": ${INDEXED_BUILDS}
+    }"
+
+echo "INFO - Create policy"
+curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
+    -H 'Content-Type: application/json' \
+    -X POST "${XRAY_URL}/api/v2/policies" \
+    -d \
+    "{
+        \"name\": \"fail-build-on-high-severity\",
+        \"description\": \"Fail build on high severity issue\",
+        \"type\": \"security\",
+        \"rules\": [
+            {
+                \"name\": \"fail-build-on-high-severity-rule\",
+                \"criteria\": {
+                    \"min_severity\": \"high\"
+                },
+                \"actions\": {
+                    \"fail_build\": true
+                },
+                \"priority\": 1
+            }
+        ]
+    }"
+
+echo "INFO - Create watch"
+curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
+     -H 'Content-Type: application/json' \
+     -X POST "${XRAY_URL}/api/v2/watches" \
+     -d \
+     "{
+        \"general_data\": {
+            \"name\": \"devsecops-docker-build-watch\",
+            \"description\": \"Docker build\",
+            \"active\": true
+        },
+        \"project_resources\": {
+            \"resources\": [{
+                \"type\": \"all-builds\",
+                \"bin_mgr_id\": \"default\",
+                \"name\":\"\",
+                \"filters\":[{\"type\":\"ant-patterns\",\"value\":{\"IncludePatterns\":[\"devsecops-*/*\"]}}]
+            }]
+        },
+        \"assigned_policies\": [{
+            \"name\": \"fail-build-on-high-severity\",
+            \"type\": \"security\"
+        }]
+    }"
+
 echo "INFO - configure CLI for Gradle"
 ../../jfrog rt gradle-config --server-id-resolve="${CLI_INSTANCE_ID}" --repo-resolve="${GRADLE_REPO_DEV}" --server-id-deploy="${CLI_INSTANCE_ID}" --repo-deploy="${GRADLE_REPO_DEV}" --use-wrapper=true --uses-plugin=true --deploy-ivy-desc=false
 

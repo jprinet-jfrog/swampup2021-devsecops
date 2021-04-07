@@ -84,3 +84,12 @@ echo "INFO - Scan Docker build"
 
 echo "INFO - Promote Docker image to ${DOCKER_REPO_PROD}"
 ../../jfrog rt build-promote --server-id="${CLI_INSTANCE_ID}" "${CLI_DOCKER_BUILD_NAME}" "${CLI_BUILD_ID}" "${DOCKER_REPO_PROD}-local"
+
+echo "INFO - Check local docker image"
+docker images | grep "${DOCKER_REPO_PROD}"
+
+echo "INFO - Pull docker image"
+docker pull "${IMAGE_ABSOLUTE_NAME_PROD}"
+
+echo "INFO - Check local docker image"
+docker images | grep "${DOCKER_REPO_PROD}"

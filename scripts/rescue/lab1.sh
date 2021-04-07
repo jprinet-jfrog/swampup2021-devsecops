@@ -61,3 +61,12 @@ curl -H "X-JFrog-Art-Api: ${ARTIFACTORY_API_KEY}" \
      -H 'Content-Type: application/json' \
      -X POST "${ARTIFACTORY_URL}/api/docker/${DOCKER_REPO_DEV}-local/v2/promote" \
      -d "{\"targetRepo\":\"${DOCKER_REPO_PROD}-local\",\"dockerRepository\":\"${IMAGE_NAME}\"}"
+
+echo "INFO - Check local docker image"
+docker images | grep "${DOCKER_REPO_PROD}"
+
+echo "INFO - Pull docker image"
+docker pull "${IMAGE_ABSOLUTE_NAME_PROD}"
+
+echo "INFO - Check local docker image"
+docker images | grep "${DOCKER_REPO_PROD}"
