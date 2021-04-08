@@ -117,17 +117,17 @@ docker build -t "${IMAGE_ABSOLUTE_NAME_DEV}" --build-arg "BASE_IMAGE=${BASE_IMAG
 
 Check local docker image:
 ```bash
-docker images | grep ${DOCKER_REPO_PROD}
+docker images | grep "${DOCKER_REPO_PROD}"
 ```
 
 Pull docker image:
 ```bash
-docker pull ${IMAGE_ABSOLUTE_NAME_PROD}
+docker pull "${IMAGE_ABSOLUTE_NAME_PROD}"
 ```
 
 Check local docker image:
 ```bash
-docker images | grep ${DOCKER_REPO_PROD}
+docker images | grep "${DOCKER_REPO_PROD}"
 ```
 
 ## Conclusion

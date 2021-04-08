@@ -26,7 +26,7 @@
 => let's make this actionable
 
 ### Refine on severity
-- name: devsecops-prod-swampup-high
+- name: devsecops-prod-swampup-high-with-fix
 - Scope: repository devsecops-docker-prod-local
 - impacted artifact: */swampup/devsecops:*
 - severity: high

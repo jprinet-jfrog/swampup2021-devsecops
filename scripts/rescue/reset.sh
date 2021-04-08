@@ -75,6 +75,62 @@ curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
      -H 'Content-Type: application/json' \
      -X DELETE "${XRAY_URL}/api/v2/policies/raise-violation-on-high-severity"
 
+echo "INFO - Collect indexing configuration"
+INDEXED_REPOS=$(curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
+                  -H 'Content-Type: application/json' \
+                  -X GET "${XRAY_URL}/api/v1/binMgr/default/repos" \
+                  | jq 'del(.indexed_repos[] | select(. == "devsecops-docker-prod-local"))' \
+                  | jq -r '.indexed_repos')
+
+INDEXED_BUILDS=$(curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
+                  -H 'Content-Type: application/json' \
+                  -X GET "${XRAY_URL}/api/v1/binMgr/default/builds" \
+                  | jq 'del(.indexed_builds[] | select(. == "devsecops-gradle-legacy" or . == "devsecops-gradle" or . == "devsecops-docker"))' \
+                  | jq -r '.indexed_builds')
+
+echo "INFO - resetting indexing configuration"
+curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
+    -H 'Content-Type: application/json' \
+    -X PUT "${XRAY_URL}/api/v1/binMgr/default/repos" \
+    -d \
+    "{
+        \"indexed_repos\": ${INDEXED_REPOS}
+    }"
+
+curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
+    -H 'Content-Type: application/json' \
+    -X PUT "${XRAY_URL}/api/v1/binMgr/default/builds" \
+    -d \
+    "{
+        \"indexed_builds\": ${INDEXED_BUILDS}
+    }"
+
+echo "INFO - removing reports"
+REPORT_ID_LICENSE=$(curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
+                      -H 'Content-Type: application/json' \
+                      -X POST "${XRAY_URL}/api/v1/reports?page_num=1&num_of_rows=1" \
+                      -d "{\"filters\": {\"name\":\"devsecops-prod-swampup-licenses\"}}" \
+                    | jq -r '.reports[0].id')
+REPORT_ID_FIX=$(curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
+                      -H 'Content-Type: application/json' \
+                      -X POST "${XRAY_URL}/api/v1/reports?page_num=1&num_of_rows=1" \
+                      -d "{\"filters\": {\"name\":\"devsecops-prod-swampup-high-with-fix\"}}" \
+                    | jq -r '.reports[0].id')
+REPORT_ID_HIGH=$(curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
+                      -H 'Content-Type: application/json' \
+                      -X POST "${XRAY_URL}/api/v1/reports?page_num=1&num_of_rows=1" \
+                      -d "{\"filters\": {\"name\":\"devsecops-prod-swampup-high\"}}" \
+                    | jq -r '.reports[0].id')
+REPORT_ID=$(curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
+                      -H 'Content-Type: application/json' \
+                      -X POST "${XRAY_URL}/api/v1/reports?page_num=1&num_of_rows=1" \
+                      -d "{\"filters\": {\"name\":\"devsecops-prod-swampup\"}}" \
+                    | jq -r '.reports[0].id')
+curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" -X DELETE "${XRAY_URL}/api/v1/reports/${REPORT_ID_LICENSE}"
+curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" -X DELETE "${XRAY_URL}/api/v1/reports/${REPORT_ID_FIX}"
+curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" -X DELETE "${XRAY_URL}/api/v1/reports/${REPORT_ID_HIGH}"
+curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" -X DELETE "${XRAY_URL}/api/v1/reports/${REPORT_ID}"
+
 echo "INFO - removing CLI configuration"
 ../../jfrog config remove "${CLI_INSTANCE_ID}" --quiet
 

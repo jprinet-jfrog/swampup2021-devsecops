@@ -8,3 +8,6 @@ java --version
 
 echo "INFO - curl version"
 curl --version
+
+echo "INFO - jq version"
+jq --version
