@@ -33,8 +33,8 @@ IMAGE_ABSOLUTE_NAME_PROD="${DOCKER_REGISTRY_PROD}/${IMAGE_NAME}:${PROJECT_VERSIO
 
 ## Index resources
 
-- Index **devsecops-docker-prod-local** repository 
-- Expedite the indexing progress using the Index Now feature.
+- Index **devsecops-docker-prod-local** and **devsecops-gradle-prod-local** repository 
+- Expedite the indexing process using the Index Now feature.
 
 ## Create Xray policy
 

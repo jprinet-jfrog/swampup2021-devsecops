@@ -36,7 +36,7 @@ echo "INFO - Collect indexing configuration"
 INDEXED_REPOS=$(curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
                   -H 'Content-Type: application/json' \
                   -X GET "${XRAY_URL}/api/v1/binMgr/default/repos" \
-                  | jq -r '.indexed_repos + [{"name": "devsecops-docker-prod-local","type": "local","pkg_type": "Docker"}]')
+                  | jq -r '.indexed_repos + [{"name": "devsecops-docker-prod-local","type": "local","pkg_type": "Docker"}] + [{"name": "devsecops-gradle-prod-local","type": "local","pkg_type": "Gradle"}]')
 
 echo "INFO - Updating indexing configuration"
 curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
