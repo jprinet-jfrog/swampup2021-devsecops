@@ -36,6 +36,7 @@ STRUTS_VERSION='2.5.26'
 DOCKER_REPO_DEV=devsecops-docker-dev
 DOCKER_REPO_PROD=devsecops-docker-prod
 GRADLE_REPO_DEV=devsecops-gradle-dev
+GRADLE_REPO_PROD=devsecops-gradle-prod
 
 DOCKER_REGISTRY_DEV="${ARTIFACTORY_HOSTNAME}/${DOCKER_REPO_DEV}"
 DOCKER_REGISTRY_PROD="${ARTIFACTORY_HOSTNAME}/${DOCKER_REPO_PROD}"
@@ -75,6 +76,12 @@ IMAGE_ABSOLUTE_NAME_PROD="${DOCKER_REGISTRY_PROD}/${IMAGE_NAME}:${PROJECT_VERSIO
 
 ```bash
 ./jfrog rt build-publish --server-id="${CLI_INSTANCE_ID}" "${CLI_GRADLE_BUILD_NAME}" "${CLI_BUILD_ID}"
+```
+
+## Promote Gradle build to production repository
+
+```bash
+./jfrog rt build-promote --server-id="${CLI_INSTANCE_ID}" "${CLI_GRADLE_BUILD_NAME}" "${CLI_BUILD_ID}" "${GRADLE_REPO_PROD}-local" 
 ```
 
 ## Log into Docker registry

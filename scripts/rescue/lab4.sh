@@ -30,6 +30,7 @@ readonly STRUTS_VERSION='2.5.26'
 readonly DOCKER_REPO_DEV=devsecops-docker-dev
 readonly DOCKER_REPO_PROD=devsecops-docker-prod
 readonly GRADLE_REPO_DEV=devsecops-gradle-dev
+readonly GRADLE_REPO_PROD=devsecops-gradle-prod
 
 readonly DOCKER_REGISTRY_DEV="${ARTIFACTORY_HOSTNAME}/${DOCKER_REPO_DEV}"
 readonly DOCKER_REGISTRY_PROD="${ARTIFACTORY_HOSTNAME}/${DOCKER_REPO_PROD}"
@@ -61,6 +62,9 @@ echo "INFO - build gradle project"
 
 echo "INFO - publish Gradle build info"
 ../../jfrog rt build-publish --server-id="${CLI_INSTANCE_ID}" "${CLI_GRADLE_BUILD_NAME}" "${CLI_BUILD_ID}"
+
+echo "INFO - Promote Gradle build to ${GRADLE_REPO_PROD}"
+../../jfrog rt build-promote --server-id="${CLI_INSTANCE_ID}" "${CLI_GRADLE_BUILD_NAME}" "${CLI_BUILD_ID}" "${GRADLE_REPO_PROD}-local"
 
 echo "INFO - Log into Docker registry ${DOCKER_REGISTRY_DEV}"
 docker login -u "${ARTIFACTORY_LOGIN}" -p "${ARTIFACTORY_API_KEY}" "${DOCKER_REGISTRY_DEV}"

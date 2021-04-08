@@ -79,7 +79,7 @@ echo "INFO - Collect indexing configuration"
 INDEXED_REPOS=$(curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
                   -H 'Content-Type: application/json' \
                   -X GET "${XRAY_URL}/api/v1/binMgr/default/repos" \
-                  | jq 'del(.indexed_repos[] | select(. == "devsecops-docker-prod-local"))' \
+                  | jq 'del(.indexed_repos[] | select(.name == "devsecops-docker-prod-local" or .name == "devsecops-gradle-prod-local"))' \
                   | jq -r '.indexed_repos')
 
 INDEXED_BUILDS=$(curl -u "${ARTIFACTORY_LOGIN}:${ARTIFACTORY_API_KEY}" \
